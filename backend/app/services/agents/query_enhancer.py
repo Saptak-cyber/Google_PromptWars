@@ -40,8 +40,10 @@ class QueryEnhancer:
     def __init__(self):
         self.llm = ChatOpenAI(
             model=settings.nvidia_model,
-            openai_api_key=settings.nvidia_api_key,
-            openai_api_base=settings.nvidia_base_url,
+            api_key=settings.nvidia_api_key,
+            base_url=settings.nvidia_base_url,
+            max_retries=settings.nvidia_max_retries,
+            timeout=settings.nvidia_timeout,
             temperature=0.2,
             max_tokens=256,
         )

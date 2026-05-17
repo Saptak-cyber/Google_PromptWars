@@ -117,15 +117,17 @@ async def search(
         )
 
     client = _get_client()
-    results = await client.search(
+    response = await client.query_points(
         collection_name=settings.qdrant_collection,
-        query_vector=query_vector,
+        query=query_vector,
         limit=k,
         query_filter=qdrant_filter,
         with_payload=True,
         score_threshold=0.35,   # Minimum relevance threshold
     )
     await client.close()
+
+    results = response.points
 
     return [
         {

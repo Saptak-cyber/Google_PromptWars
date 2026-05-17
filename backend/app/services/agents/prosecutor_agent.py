@@ -62,8 +62,10 @@ class ProsecutorAgent:
     def __init__(self):
         self.llm = ChatOpenAI(
             model=settings.nvidia_model,
-            openai_api_key=settings.nvidia_api_key,
-            openai_api_base=settings.nvidia_base_url,
+            api_key=settings.nvidia_api_key,
+            base_url=settings.nvidia_base_url,
+            max_retries=settings.nvidia_max_retries,
+            timeout=settings.nvidia_timeout,
             temperature=0.3,
             max_tokens=1024,
         )
@@ -89,9 +91,11 @@ class ProsecutorAgent:
             # Stream tokens as they arrive
             streaming_llm = ChatOpenAI(
                 model=settings.nvidia_model,
-                openai_api_key=settings.nvidia_api_key,
-                openai_api_base=settings.nvidia_base_url,
-                temperature=0.3,
+                api_key=settings.nvidia_api_key,
+                base_url=settings.nvidia_base_url,
+                max_retries=settings.nvidia_max_retries,
+            timeout=settings.nvidia_timeout,
+            temperature=0.3,
                 max_tokens=1024,
                 streaming=True,
             )
