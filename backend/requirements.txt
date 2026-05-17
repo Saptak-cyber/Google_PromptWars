@@ -1,0 +1,50 @@
+# ── Web Framework ────────────────────────────────────────────────────────
+# Unpinned — lets pip resolve versions compatible with Python 3.14
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+python-multipart>=0.0.12
+aiofiles>=24.1.0
+httpx>=0.27.0
+
+# ── Config ───────────────────────────────────────────────────────────────
+# pydantic 2.10+ → pydantic-core 2.27+ → PyO3 0.23+ → Python 3.14 ✓
+pydantic>=2.10.6
+pydantic-settings>=2.7.0
+
+# ── LlamaIndex (└ SemanticSplitterNodeParser) ────────────────────────────
+# llama-cloud-services SDK REMOVED — it uses pydantic.v1 which is broken on Python 3.14.
+# We call the LlamaParse REST API directly via httpx in parser.py instead.
+# SemanticSplitterNodeParser ships inside llama-index-core (pulled by llama-index below).
+# Ref: developers.llamaindex.ai/python/examples/node_parsers/semantic_chunking/
+llama-index                   # meta-package — pulls compatible llama-index-core
+
+# ── LangChain ─────────────────────────────────────────────────────────────
+# Unpinned — let pip resolve; LangChain moves fast and patches Python compat quickly
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-openai>=0.2.0
+langchain-postgres>=0.0.13
+langchain-community>=0.3.0
+
+# ── LangSmith ─────────────────────────────────────────────────────────────
+langsmith>=0.2.0
+
+# ── Database (Neon / PostgreSQL) ──────────────────────────────────────────
+sqlalchemy[asyncio]>=2.0.36
+asyncpg>=0.30.0          # 0.30.0 added Python 3.14 wheels (3.13 compat too)
+# psycopg2-binary REMOVED — langchain-postgres uses psycopg3, not psycopg2.
+# Install psycopg3 instead (async-first, Python 3.14 wheels available):
+psycopg[binary]>=3.2.0   # psycopg3 — used by langchain-postgres under the hood
+alembic>=1.14.0
+
+# ── Vector Store ──────────────────────────────────────────────────────────
+qdrant-client>=1.12.0
+
+# ── OpenAI client (for NVIDIA NIM compat) ─────────────────────────────────
+openai>=1.40.0
+
+# ── Utilities ─────────────────────────────────────────────────────────────
+python-dotenv>=1.0.1
+tenacity>=9.0.0
+numpy>=2.0.0             # numpy 2.x has Python 3.14 wheels; 1.26.x does not
+huggingface_hub

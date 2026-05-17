@@ -1,0 +1,6 @@
+LEXGUARD
+AI Rights & Contract Intelligence System:
+
+An adversarial multi-agent AI system that analyzes contracts, offer letters, quotations, ticket terms, and online policies to detect exploitative clauses, hidden liabilities, legal ambiguities, and real-world risks before users agree to them.
+
+Design and develop an AI-powered contract intelligence platform capable of analyzing legal and quasi-legal documents to identify potentially harmful, exploitative, ambiguous, or high-risk clauses before users agree to them.
