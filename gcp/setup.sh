@@ -54,6 +54,12 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --member="serviceAccount:${CB_SA}" \
   --role="roles/secretmanager.secretAccessor" --quiet
 
+# Grant Cloud Run runtime service account (Compute Engine default SA) access to Secret Manager
+COMPUTE_SA="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:${COMPUTE_SA}" \
+  --role="roles/secretmanager.secretAccessor" --quiet
+
 gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --member="serviceAccount:${CB_SA}" \
   --role="roles/iam.serviceAccountUser" --quiet
