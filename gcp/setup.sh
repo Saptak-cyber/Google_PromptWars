@@ -94,9 +94,9 @@ create_secret() {
   fi
   
   if gcloud secrets describe "$name" --project="$PROJECT_ID" &>/dev/null; then
-    echo "$value" | gcloud secrets versions add "$name" --data-file=- --project="$PROJECT_ID" --quiet
+    echo -n "$value" | gcloud secrets versions add "$name" --data-file=- --project="$PROJECT_ID" --quiet
   else
-    echo "$value" | gcloud secrets create "$name" --data-file=- --project="$PROJECT_ID" --replication-policy=automatic --quiet
+    echo -n "$value" | gcloud secrets create "$name" --data-file=- --project="$PROJECT_ID" --replication-policy=automatic --quiet
   fi
 }
 
