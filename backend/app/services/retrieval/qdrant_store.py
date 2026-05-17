@@ -47,6 +47,12 @@ async def ensure_collection():
                 distance=Distance.COSINE,
             ),
         )
+        # Required for filtering points by doc_id during deletion
+        await client.create_payload_index(
+            collection_name=settings.qdrant_collection,
+            field_name="doc_id",
+            field_schema="keyword",
+        )
         logger.info(f"✅ Created Qdrant collection '{settings.qdrant_collection}'")
     await client.close()
 
@@ -137,6 +143,17 @@ async def search(
 async def delete_by_doc_id(doc_id: str):
     """Delete all vectors for a given document."""
     client = _get_client()
+    
+    # Ensure index exists on existing collections before filtering
+    try:
+        await client.create_payload_index(
+            collection_name=settings.qdrant_collection,
+            field_name="doc_id",
+            field_schema="keyword",
+        )
+    except Exception as e:
+        logger.debug(f"Payload index creation skipped: {e}")
+
     await client.delete(
         collection_name=settings.qdrant_collection,
         points_selector=Filter(

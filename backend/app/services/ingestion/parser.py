@@ -136,7 +136,7 @@ def _split_into_documents(
 ) -> list[LlamaDocument]:
     """
     Split the full markdown string into per-page LlamaIndex Documents.
-    LlamaParse separates pages with '\\n---\\n' in its markdown output.
+    LlamaParse separates pages with '\n---\n' in its markdown output.
     """
     pages = [p.strip() for p in markdown.split(_PAGE_SEP) if p.strip()]
     if not pages:
