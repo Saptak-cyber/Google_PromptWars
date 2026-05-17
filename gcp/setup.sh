@@ -28,11 +28,15 @@ gcloud services enable \
 
 # Create Artifact Registry repository
 echo "📦 Creating Artifact Registry repository..."
-gcloud artifacts repositories create lexguard \
-  --repository-format=docker \
-  --location="$REGION" \
-  --description="LexGuard Docker images" \
-  --project="$PROJECT_ID" 2>/dev/null || echo "  (already exists)"
+if ! gcloud artifacts repositories describe lexguard --location="$REGION" --project="$PROJECT_ID" &>/dev/null; then
+  gcloud artifacts repositories create lexguard \
+    --repository-format=docker \
+    --location="$REGION" \
+    --description="LexGuard Docker images" \
+    --project="$PROJECT_ID" --quiet
+else
+  echo "  ✓ lexguard (already exists)"
+fi
 
 # Grant Cloud Build access to Artifact Registry + Cloud Run
 PROJECT_NUMBER=$(gcloud projects describe "$PROJECT_ID" --format="value(projectNumber)")
@@ -54,24 +58,40 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --member="serviceAccount:${CB_SA}" \
   --role="roles/iam.serviceAccountUser" --quiet
 
-# Create secrets in Secret Manager
-echo ""
-echo "🔐 Creating Secret Manager secrets..."
-echo "   You will be prompted to enter each secret value."
-echo ""
+# Load local .env if it exists to avoid manual prompting
+ENV_FILE="backend/.env"
+if [ -f "$ENV_FILE" ]; then
+  echo "📖 Found local backend/.env. Values will be loaded automatically."
+fi
+
+get_env_val() {
+  local key="$1"
+  if [ -f "$ENV_FILE" ]; then
+    # Extract value, stripping comments and any surrounding single or double quotes
+    grep "^${key}=" "$ENV_FILE" | head -n 1 | cut -d'=' -f2- | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//" | cut -d'#' -f1 | sed 's/[[:space:]]*$//'
+  fi
+}
 
 create_secret() {
   local name="$1"
   local prompt="$2"
-  echo -n "  $prompt: "
-  read -rs value
-  echo
+  
+  local value=""
+  value=$(get_env_val "$name")
+  
+  if [ -n "$value" ]; then
+    echo "  ✓ $name (auto-loaded from backend/.env)"
+  else
+    echo -n "  $prompt: "
+    read -rs value
+    echo
+  fi
+  
   if gcloud secrets describe "$name" --project="$PROJECT_ID" &>/dev/null; then
     echo "$value" | gcloud secrets versions add "$name" --data-file=- --project="$PROJECT_ID" --quiet
   else
     echo "$value" | gcloud secrets create "$name" --data-file=- --project="$PROJECT_ID" --replication-policy=automatic --quiet
   fi
-  echo "  ✓ $name"
 }
 
 create_secret "LLAMAPARSE_API_KEY"   "LlamaParse API key (llx-...)"

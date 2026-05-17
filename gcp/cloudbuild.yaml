@@ -60,6 +60,7 @@ steps:
       - --concurrency=80
       - --timeout=300
       - --set-secrets=LLAMAPARSE_API_KEY=LLAMAPARSE_API_KEY:latest,HF_API_KEY=HF_API_KEY:latest,QDRANT_URL=QDRANT_URL:latest,QDRANT_API_KEY=QDRANT_API_KEY:latest,NVIDIA_API_KEY=NVIDIA_API_KEY:latest,LANGSMITH_API_KEY=LANGSMITH_API_KEY:latest,NEON_DATABASE_URL=NEON_DATABASE_URL:latest
+      - --set-env-vars=EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2,EMBEDDING_DIMENSIONS=384,QDRANT_COLLECTION=lexguard_contracts,NVIDIA_MODEL=nvidia/nemotron-3-super-120b-a12b,NVIDIA_TIMEOUT=300,NVIDIA_MAX_RETRIES=10,MAX_RAG_RETRIES=3,MAX_HISTORY_MESSAGES=10,RETRIEVAL_TOP_K=10,QUALITY_THRESHOLD=0.2,MAX_UPLOAD_SIZE_MB=50
     waitFor: [push-backend]
 
   # ── Deploy Frontend to Cloud Run ────────────────────────────────────────
